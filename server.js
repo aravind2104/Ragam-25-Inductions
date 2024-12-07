@@ -11,7 +11,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api', bookRoutes);
 
-mongoose.connect(process.env.DB_URI, {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(process.env.DB_URI)
     .then(() =>  console.log('Connected to Database'))
     .catch(err => console.log('Connection Error: ', err));
 
