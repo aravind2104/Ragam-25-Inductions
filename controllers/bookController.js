@@ -52,11 +52,7 @@ exports.updateBook = async (req, res) => {
         book.published_year = published_year;
         book.available_copies = available_copies;
         await book.save();
-        if (req.headers.accept && req.headers.accept.includes('application/json')) {
-            res.json(updatedBook);
-        } else {
-            res.redirect('/books');
-        }
+        res.json(updatedBook);
     } catch (error) {
         res.status(500).json({message: "Error in updating book", error: error.message});
     }
@@ -68,11 +64,7 @@ exports.deleteBook = async (req, res) => {
         if(!book) {
             return res.status(404).json({message: "Book not found"});
         }
-        if (req.headers.accept && req.headers.accept.includes('application/json')) {
-            res.json({ message: 'Book deleted successfully' });
-        } else {
-            res.redirect('/books');
-        }
+        res.json({ message: 'Book deleted successfully' });
     } catch (error) {
         res.status(500).json({message: "Error in deleting book", error: error.message});
     }
