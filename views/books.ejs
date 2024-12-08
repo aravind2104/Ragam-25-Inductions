@@ -6,7 +6,7 @@
     <title>Books List</title>
 </head>
 <body>
-    <a href="/login">Login</a> | <a href="/register">Register</a>
+    <a href="/">Login</a> | <a href="/register">Register</a>
     <h1>List of Books</h1>
     <ul>
         <% books.forEach(book => { %>
@@ -48,12 +48,12 @@
         }
         else{
             alert('You need to login first');
-            window.location.href = '/login';
+            window.location.href = '/';
         }
         document.getElementById('logoutButton').addEventListener('click', function() {
             localStorage.removeItem('jwtToken');    
             alert('Logged out successfully');    
-            window.location.href = '/login';  // Adjust the path based on where your login page is located
+            window.location.href = '/';  // Adjust the path based on where your login page is located
         });
     </script>
 </body>

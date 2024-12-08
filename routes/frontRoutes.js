@@ -8,7 +8,7 @@ router.get('/add-Book', (req, res) => {
     res.render('addBook');
 });
 router.get('/books', bookController.getAllBooks);
-router.get('/login', (req, res) => {
+router.get('/', (req, res) => {
     res.render('login');
 });
 router.get('/register', (req, res) => {
