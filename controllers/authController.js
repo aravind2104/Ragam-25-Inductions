@@ -11,6 +11,7 @@ exports.register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({ name, email, password: hashedPassword, membership_type });
         await newUser.save();
+        console.log("saved");
         res.status(201).json(newUser);
     } catch (error) {
         res.status(500).json({ message: "Error in registering user", error: error.message });
@@ -19,7 +20,7 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     const { email, password } = req.body;
-
+    console.log(email);
     try {
         const user = await User.findOne({ email});
         if(!user){
@@ -29,9 +30,12 @@ exports.login = async (req, res) => {
         if(!match){
             return res.status(401).json({message: 'Incorrect password'});
         }
-        const token = jwt.sign({id:user._id,email: user.email}, JWT_SECRET, {expiresIn: '1h'});
-        res.status(200).json({token});
+        const token = jwt.sign({id:user.id,email: user.email}, JWT_SECRET, {expiresIn: '1h'});
+        console.log(JWT_SECRET);
+        console.log(token);
+        res.status(200).json({message:"Login Successful",token:token});
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: "Error in logging in user", error: error.message });
     }
 };

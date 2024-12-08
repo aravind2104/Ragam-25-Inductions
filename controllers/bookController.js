@@ -22,7 +22,8 @@ exports.getAllBooks = async (req, res) => {
 
 exports.getBook = async (req, res) => {
     try {
-        const book = await Book.findById(req.params.id);
+        const id = parseInt(req.params.id);
+        const book = await Book.findById(id);
         if(!book) {
             return res.status(404).json({message: "Book not found"});
         }
