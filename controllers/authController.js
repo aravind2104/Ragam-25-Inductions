@@ -6,6 +6,7 @@ require('dotenv').config();
 exports.register = async (req, res) => {
     const { name, email, password, membership_type } = req.body;
     try {
+        console.log(req.body);
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({ name, email, password: hashedPassword, membership_type });
         await newUser.save();
