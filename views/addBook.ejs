@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Book</title>
+</head>
+<body>
+    <h1>Add a New Book</h1>
+    <form id="addBookForm">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required><br><br>
+
+        <label for="author">Author:</label>
+        <input type="text" id="author" name="author" required><br><br>
+
+        <label for="genre">Genre:</label>
+        <input type="text" id="genre" name="genre" required><br><br>
+
+        <label for="published_year">Published Year:</label>
+        <input type="number" id="published_year" name="published_year" required><br><br>
+
+        <label for="available_copies">Available Copies:</label>
+        <input type="number" id="available_copies" name="available_copies" required><br><br>
+
+        <button type="submit">Add Book</button>
+    </form>
+
+    <div id="feedbackMessage"></div> <!-- For displaying success/error messages -->
+
+    <script>
+        document.getElementById('addBookForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Get form data
+            const formData = {
+                title: document.getElementById('title').value,
+                author: document.getElementById('author').value,
+                genre: document.getElementById('genre').value,
+                published_year: parseInt(document.getElementById('published_year').value, 10),
+                available_copies: parseInt(document.getElementById('available_copies').value, 10)
+            };
+
+            // Get the JWT token from localStorage
+            const token = localStorage.getItem('jwtToken');
+
+            // Check if token is available
+            if (token) {
+                fetch('/api/books', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` // Attach JWT token in header
+                    },
+                    body: JSON.stringify(formData) // Send the book data in the request body
+                })
+                .then(response => {
+                    if (!response.ok) { // Check for HTTP errors
+                        throw new Error('Failed to add book');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Book added successfully', data);
+                    // Display success message
+                    document.getElementById('feedbackMessage').innerHTML = 'Book added successfully!';
+                    // Optionally, clear the form
+                    document.getElementById('addBookForm').reset();
+                    window.location.href = '/books'; // Redirect to the books list page
+                })
+                .catch(error => {
+                    console.error('Error adding book:', error);
+                    // Display error message
+                    document.getElementById('feedbackMessage').innerHTML = 'Error adding book. Please try again.';
+                });
+            } else {
+                // No JWT token found
+                console.log('No token found, please login');
+                document.getElementById('feedbackMessage').innerHTML = 'Please login to add a book.';
+            }
+        });
+    </script>
+</body>
+</html>

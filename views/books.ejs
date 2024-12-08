@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books List</title>
+</head>
+<body>
+    <a href="/login">Login</a> | <a href="/register">Register</a>
+    <h1>List of Books</h1>
+    <ul>
+        <% books.forEach(book => { %>
+            <li>
+                <strong><%= book.title %></strong> by <%= book.author %> (Published: <%= book.published_year %>)
+                <br>
+                Genre: <%= book.genre %> | Available Copies: <%= book.available_copies %>
+                <br>
+                <button onclick="editBook('<%= book._id %>')">Edit</button>
+                <button onclick="deleteBook('<%= book._id %>')">Delete</button>
+            </li>
+        <% }) %>
+    </ul>
+
+    <a href="/add-Book"><button>Add New Book</button></a>
+    <button id="logoutButton">Logout</button>
+    <script>
+        const token = localStorage.getItem('jwtToken');
+    
+        function editBook(bookId) {
+            // Redirect to the edit page (implement this in your routes later)
+            window.location.href = `/edit-book/${bookId}`;
+        }
+        if(token){
+            function deleteBook(bookId) {
+                fetch(`/api/books/${bookId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                }).then(response => response.json())
+                    .then(data => {
+                    alert('Book deleted');
+                    window.location.reload(); 
+                })
+                  .catch(error => console.error('Error deleting book:', error));
+            }
+        }
+        else{
+            alert('You need to login first');
+            window.location.href = '/login';
+        }
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            localStorage.removeItem('jwtToken');    
+            alert('Logged out successfully');    
+            window.location.href = '/login';  // Adjust the path based on where your login page is located
+        });
+    </script>
+</body>
+</html>

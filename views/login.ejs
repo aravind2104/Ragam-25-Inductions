@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login</h1>
+    <form id="loginForm">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <button type="submit">Login</button>
+        <h4>Don't have an Account?</h4>
+        <a href="/register">Register</a>
+    </form>
+
+    <script>
+        // Handle login form submission using AJAX
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const formData = {
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value
+            };
+
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.token) {
+                    // Save JWT token in localStorage or sessionStorage
+                    localStorage.setItem('jwtToken', data.token);
+                    alert('Login successful!');
+                    window.location.href = '/books';  // Redirect to the books list page after login
+                } else {
+                    alert('Invalid credentials!');
+                }
+            })
+            .catch(error => {
+                console.error('Error logging in:', error);
+                alert('Failed to login');
+            });
+        });
+    </script>
+</body>
+</html>

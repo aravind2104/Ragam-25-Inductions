@@ -15,7 +15,12 @@ exports.addBook = async (req, res) => {
 exports.getAllBooks = async (req, res) => {
     try {
         const books = await Book.find();
-        res.status(200).json(books);
+        if(req.headers.accept && req.headers.accept.includes('application/json')) {
+            res.status(200).json(books);
+        }
+        else{
+            res.render('books', {books});
+        }
     } catch (error) {
         res.status(500).json({message: "Error in fetching books", error: err});
     }
@@ -47,7 +52,11 @@ exports.updateBook = async (req, res) => {
         book.published_year = published_year;
         book.available_copies = available_copies;
         await book.save();
-        res.status(200).json(book);
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            res.json(updatedBook);
+        } else {
+            res.redirect('/books');
+        }
     } catch (error) {
         res.status(500).json({message: "Error in updating book", error: error.message});
     }
@@ -59,7 +68,11 @@ exports.deleteBook = async (req, res) => {
         if(!book) {
             return res.status(404).json({message: "Book not found"});
         }
-        res.status(200).json({message: "Book deleted successfully"});
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            res.json({ message: 'Book deleted successfully' });
+        } else {
+            res.redirect('/books');
+        }
     } catch (error) {
         res.status(500).json({message: "Error in deleting book", error: error.message});
     }
