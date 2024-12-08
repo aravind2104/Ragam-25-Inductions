@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-const getNextSequence = require('./sequenceModel');
+const Counter = require('./sequenceModel');
 
 const bookSchema = new mongoose.Schema({
-    id:{type:Number, required:true},
+    _id: {type: Number},
     title: { type: String, required: true },
     author: { type: String, required: true },
     genre: { type: String, required: true },
@@ -11,10 +11,24 @@ const bookSchema = new mongoose.Schema({
 });
 
 bookSchema.pre('save', async function(next) {
-    if(!this.id) {
-        this.id = await getNextSequence('bookId');
+    if(this.isNew) {
+        try {
+            const counter = await Counter.findByIdAndUpdate(
+                { _id: 'bookId' },
+                { $inc: { seq: 1 } },
+                { new: true, upsert: true }
+            );
+            if(!counter) {
+                throw new Error("Counter not found");
+            }
+            this._id = counter.seq;
+            next();
+        } catch (error) {
+            next(error);
+        }
+    } else {
+        next();
     }
-    next();
 });
 
 module.exports = mongoose.model('Book', bookSchema);

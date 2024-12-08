@@ -1,8 +1,9 @@
 const Book = require('../models/bookModel');
+const Counter = require('../models/sequenceModel');
 
 exports.addBook = async (req, res) => {
+    const {title, author, genre, published_year, available_copies} = req.body;
     try {
-        const {title, author, genre, published_year, available_copies} = req.body;
         const newBook = new Book({title, author, genre, published_year, available_copies});
         await newBook.save();
         res.status(201).json(newBook);
